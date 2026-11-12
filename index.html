@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TaskNest – a Kanban-style task management app built with HTML5, CSS3 and ES6 JavaScript." />
+  <title>TaskNest · Kanban Task Manager</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/nest.svg" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="topbar">
+    <a class="logo" href="#overview" aria-label="TaskNest home">
+      <img src="assets/icons/nest.svg" alt="" width="40" height="40" />
+      <span>TASK<b>NEST</b></span>
+    </a>
+
+    <div class="topbar__actions">
+      <button class="pill-btn" id="themeBtn" type="button" aria-pressed="false">
+        <span class="pill-btn__icon" id="themeIcon" aria-hidden="true">🌙</span>
+        <span id="themeLabel">Dark mode</span>
+      </button>
+      <a class="brutal-btn brutal-btn--yellow" href="#new-task" id="quickAddBtn">＋ New Task</a>
+    </div>
+  </header>
+
+  <div class="shell">
+    <!-- ===================== NAVIGATION (sidebar) ===================== -->
+    <aside class="sidebar">
+      <nav class="sidenav" aria-label="Primary">
+        <p class="sidenav__label">MENU</p>
+        <a class="sidenav__link is-current" href="#overview"><span aria-hidden="true">▦</span> Overview</a>
+        <a class="sidenav__link" href="#new-task"><span aria-hidden="true">✚</span> New Task</a>
+        <a class="sidenav__link" href="#board"><span aria-hidden="true">☰</span> Task Board</a>
+        <a class="sidenav__link" href="#insights"><span aria-hidden="true">◔</span> Insights</a>
+      </nav>
+
+      <div class="focus-card">
+        <p class="focus-card__label">TODAY'S PROGRESS</p>
+        <p class="focus-card__value"><span id="sidePercent">0</span>%</p>
+        <div class="striped-bar"><span id="sideBar"></span></div>
+        <p class="focus-card__note" id="sideNote">No tasks yet</p>
+      </div>
+    </aside>
+
+    <main id="main" class="content">
+      <!-- ===================== DASHBOARD ===================== -->
+      <section id="overview" class="block" aria-labelledby="overviewHeading">
+        <div class="block__head">
+          <div>
+            <p class="eyebrow" id="dateLine">—</p>
+            <h1 id="overviewHeading" class="display">Your work, <mark>at a glance.</mark></h1>
+          </div>
+        </div>
+
+        <div class="tiles">
+          <div class="tile tile--lilac">
+            <p class="tile__label">Total Tasks</p>
+            <p class="tile__num" data-stat="total">0</p>
+            <span class="tile__glyph" aria-hidden="true">∑</span>
+          </div>
+          <div class="tile tile--mint">
+            <p class="tile__label">Completed</p>
+            <p class="tile__num" data-stat="completed">0</p>
+            <span class="tile__glyph" aria-hidden="true">✓</span>
+          </div>
+          <div class="tile tile--yellow">
+            <p class="tile__label">Pending</p>
+            <p class="tile__num" data-stat="pending">0</p>
+            <span class="tile__glyph" aria-hidden="true">…</span>
+          </div>
+          <div class="tile tile--blue">
+            <p class="tile__label">In Progress</p>
+            <p class="tile__num" data-stat="inProgress">0</p>
+            <span class="tile__glyph" aria-hidden="true">↻</span>
+          </div>
+          <div class="tile tile--pink">
+            <p class="tile__label">High Priority</p>
+            <p class="tile__num" data-stat="high">0</p>
+            <span class="tile__glyph" aria-hidden="true">!</span>
+          </div>
+          <div class="tile tile--orange">
+            <p class="tile__label">Completion</p>
+            <p class="tile__num"><span data-stat="percent">0</span>%</p>
+            <div class="striped-bar striped-bar--dark"><span id="tileBar"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TASK FORM ===================== -->
+      <section id="new-task" class="block" aria-labelledby="formHeading">
+        <div class="panel" id="formPanel">
+          <div class="panel__head">
+            <h2 id="formHeading" class="panel__title"><span class="tag" id="formTag">NEW</span> <span id="formTitleText">Add a task</span></h2>
+            <p class="hint">Fields marked <b>*</b> are required</p>
+          </div>
+
+          <form id="taskForm" class="form-grid" novalidate autocomplete="off">
+            <input type="hidden" name="id" />
+
+            <div class="field field--wide">
+              <label for="fTitle">Title *</label>
+              <input id="fTitle" name="title" type="text" maxlength="60" placeholder="What needs to be done?" />
+              <p class="field__error" data-for="title"></p>
+            </div>
+
+            <div class="field">
+              <label for="fCategory">Category *</label>
+              <select id="fCategory" name="category">
+                <option value="">— choose —</option>
+                <option>Work</option>
+                <option>Personal</option>
+                <option>Meeting</option>
+                <option>Development</option>
+                <option>Learning</option>
+                <option>Other</option>
+              </select>
+              <p class="field__error" data-for="category"></p>
+            </div>
+
+            <div class="field">
+              <label for="fDue">Due Date *</label>
+              <input id="fDue" name="dueDate" type="date" />
+              <p class="field__error" data-for="dueDate"></p>
+            </div>
+
+            <div class="field field--full">
+              <label for="fDesc">Description * <span class="counter" id="descCounter">0/300</span></label>
+              <textarea id="fDesc" name="description" rows="3" maxlength="300" placeholder="Add some context, links or acceptance criteria..."></textarea>
+              <p class="field__error" data-for="description"></p>
+            </div>
+
+            <fieldset class="field field--wide">
+              <legend>Priority *</legend>
+              <div class="segmented" role="radiogroup">
+                <input type="radio" id="pLow" name="priority" value="Low" /><label for="pLow" class="seg seg--low">▼ Low</label>
+                <input type="radio" id="pMed" name="priority" value="Medium" /><label for="pMed" class="seg seg--medium">■ Medium</label>
+                <input type="radio" id="pHigh" name="priority" value="High" /><label for="pHigh" class="seg seg--high">▲ High</label>
+              </div>
+              <p class="field__error" data-for="priority"></p>
+            </fieldset>
+
+            <div class="field">
+              <label for="fStatus">Status *</label>
+              <select id="fStatus" name="status">
+                <option>Pending</option>
+                <option>In Progress</option>
+                <option>Completed</option>
+              </select>
+              <p class="field__error" data-for="status"></p>
+            </div>
+
+            <div class="field">
+              <label for="fAssignee">Assignee <em>(optional)</em></label>
+              <input id="fAssignee" name="assignee" type="text" maxlength="40" placeholder="Full name" />
+              <p class="field__error" data-for="assignee"></p>
+            </div>
+
+            <div class="form-grid__actions">
+              <button type="button" class="brutal-btn brutal-btn--ghost" id="clearFormBtn">Clear</button>
+              <button type="button" class="brutal-btn brutal-btn--ghost" id="cancelEditBtn" hidden>Cancel edit</button>
+              <button type="submit" class="brutal-btn brutal-btn--ink" id="saveBtn">Add Task →</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===================== TASK LIST (Kanban board) ===================== -->
+      <section id="board" class="block" aria-labelledby="boardHeading">
+        <div class="block__head block__head--row">
+          <h2 id="boardHeading" class="heading">Task Board <span class="counter-chip" id="shownCount">0 shown</span></h2>
+          <button class="brutal-btn brutal-btn--pink brutal-btn--sm" id="purgeBtn" type="button">Clear completed</button>
+        </div>
+
+        <div class="controls">
+          <label class="search-box">
+            <span class="visually-hidden">Search tasks by title</span>
+            <span aria-hidden="true">⌕</span>
+            <input type="search" id="q" placeholder="Search by title…" />
+          </label>
+          <select id="fltCategory" aria-label="Filter by category">
+            <option value="">Category: All</option>
+            <option>Work</option><option>Personal</option><option>Meeting</option>
+            <option>Development</option><option>Learning</option><option>Other</option>
+          </select>
+          <select id="fltPriority" aria-label="Filter by priority">
+            <option value="">Priority: All</option>
+            <option>High</option><option>Medium</option><option>Low</option>
+          </select>
+          <select id="fltStatus" aria-label="Filter by status">
+            <option value="">Status: All</option>
+            <option>Pending</option><option>In Progress</option><option>Completed</option>
+          </select>
+          <select id="sortSel" aria-label="Sort tasks">
+            <option value="newest">Sort: Newest</option>
+            <option value="dueSoon">Sort: Due soonest</option>
+            <option value="dueLate">Sort: Due latest</option>
+            <option value="prioHigh">Sort: Priority high→low</option>
+            <option value="prioLow">Sort: Priority low→high</option>
+          </select>
+          <button class="brutal-btn brutal-btn--ghost brutal-btn--sm" id="resetControls" type="button">Reset</button>
+        </div>
+
+        <div class="kanban" id="kanban">
+          <div class="lane" data-status="Pending">
+            <div class="lane__head lane__head--yellow"><h3>Pending</h3><span class="lane__count">0</span></div>
+            <ul class="lane__list" data-dropzone="Pending"></ul>
+          </div>
+          <div class="lane" data-status="In Progress">
+            <div class="lane__head lane__head--blue"><h3>In Progress</h3><span class="lane__count">0</span></div>
+            <ul class="lane__list" data-dropzone="In Progress"></ul>
+          </div>
+          <div class="lane" data-status="Completed">
+            <div class="lane__head lane__head--mint"><h3>Completed</h3><span class="lane__count">0</span></div>
+            <ul class="lane__list" data-dropzone="Completed"></ul>
+          </div>
+        </div>
+
+        <div class="nothing" id="nothing" hidden>
+          <img src="assets/images/nest-empty.svg" alt="" width="180" height="140" />
+          <h3 id="nothingTitle">Your nest is empty</h3>
+          <p id="nothingText">Add your first task above and it will land on the board.</p>
+        </div>
+
+        <p class="board-tip">Tip: drag cards between columns, or use the ◀ ▶ buttons, to change status.</p>
+      </section>
+
+      <!-- ===================== STATISTICS ===================== -->
+      <section id="insights" class="block" aria-labelledby="insightsHeading">
+        <h2 id="insightsHeading" class="heading">Insights</h2>
+        <div class="insights">
+          <div class="panel insight">
+            <h3 class="insight__title">Status split</h3>
+            <div class="donut-wrap">
+              <div class="donut" id="donut"><span id="donutLabel">0%<small>done</small></span></div>
+              <ul class="legend" id="statusLegend"></ul>
+            </div>
+          </div>
+          <div class="panel insight">
+            <h3 class="insight__title">By category</h3>
+            <ul class="hbars" id="catBars"></ul>
+          </div>
+          <div class="panel insight">
+            <h3 class="insight__title">By priority</h3>
+            <div class="stack-bar" id="prioStack"></div>
+            <ul class="legend legend--row" id="prioLegend"></ul>
+            <h3 class="insight__title insight__title--spaced">Deadlines</h3>
+            <div class="deadline-grid">
+              <div class="deadline deadline--red"><b data-stat="overdue">0</b><span>Overdue</span></div>
+              <div class="deadline deadline--yellow"><b data-stat="dueToday">0</b><span>Due today</span></div>
+              <div class="deadline deadline--blue"><b data-stat="dueWeek">0</b><span>Next 7 days</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+    <p><b>TASKNEST</b> · HTML5 · CSS3 · ES6 Modules · Local Storage</p>
+    <p>ApexLark Full Stack Development Internship — Day 07 · © <span id="yr"></span></p>
+  </footer>
+
+  <!-- ===================== CONFIRM DIALOG ===================== -->
+  <dialog class="confirm" id="confirmDialog" aria-labelledby="confirmTitle">
+    <form method="dialog" class="confirm__body">
+      <p class="confirm__icon" aria-hidden="true">⚠</p>
+      <h3 id="confirmTitle">Delete this task?</h3>
+      <p id="confirmText">This cannot be undone.</p>
+      <div class="confirm__actions">
+        <button value="cancel" class="brutal-btn brutal-btn--ghost" autofocus>Keep it</button>
+        <button value="ok" class="brutal-btn brutal-btn--red" id="confirmOk">Delete</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ===================== TOASTS ===================== -->
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
